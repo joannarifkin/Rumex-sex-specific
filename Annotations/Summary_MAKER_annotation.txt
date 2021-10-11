@@ -1,0 +1,42 @@
+* RNA-seq data and assembly:
+    - Data: The RNA-seq data from the following TX samples are combined: 
+        TX Flower (19-24), TXATH5, LIV14, MTP16, OAK6, ROS24, Hast 1B and 2B. 
+    - Assembly: 
+        Assembler: idba_tran. 
+        Parameters: --mink=24 --maxk=124 --step=20--pre_correction
+
+* Repeatmask gff
+    - The rm gff is created from soft masked REF_LA.fa
+
+* maker annotation (maker version 3.01.03)
+    - round 1: 
+        est: RNA-seq contigs
+        protein: Tartary proteins
+        rm_gff: from above
+        turn on est2genome and protein2genome
+    - round 2:
+        maker_gff: from round1
+        turn on est_pass, protein_pass and rm_pass
+        remove est, protein and rm_gff
+        turn on always_complete
+        snap training:
+            maker2zff parameter: -l 50 -x 0.5
+            fathom parameter: -categorize 1000, -export 1000 -plus
+    - round 3:
+        maker_gff: from round 2
+        turn off est2genome and protein2genome
+        snaphmm: from round 2
+        snap training: same as round2
+    - round 4:
+        maker_gff: from round 3
+        snaphmm: from round 3
+
+* functional annotation
+    • blastp parameters: 
+        -evalue 1e-6 -max_hsps 1 -max_target_seqs 1 -outfmt 6
+    • interproscan parameters: 
+        -appl pfam -db -f TSV -goterms -iprloopup -pa -t p
+    • programs for update functional annotation
+        ipr_update_gff, maker_functional_gff, maker_functional_fasta
+    • programs for update gene names
+        maker_map_ids, map_gff_ids, map_fasta_ids, map_data_ids
