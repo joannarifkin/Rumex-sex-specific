@@ -1,10 +1,13 @@
 #Lep-MAP3
+#Use generate_posterior_file.txt with bam files listed in sorted_bams, mapping.txt, and pedigree.txt to generate all_post.call_f.gz 
 #remove some individuals...
 #cut -f 7,45,55,58,87,110,113,119,125,151,167,176,184 --complement
-#...
+#generate maps using SeparateChromosomes2 with LOD of 30 and 34 as described in methods
 #final maps map1_for_la.txt, map2_for_la.txt and map3_for_la.txt
 #informativemask = 1, 2 and 3
 #final input data all_post.call_f.gz
+
+
 
 #Lep-Anchor
 #split into contigs

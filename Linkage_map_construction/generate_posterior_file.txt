@@ -1,0 +1,45 @@
+#1. Use the Lep-Map3 snp-calling pipeline to assign posterior probabilities to all possible genotypes
+
+	nohup samtools mpileup -q 10 -Q 10 -s $(cat sorted_bams)|awk -f /ohta/joanna.rifkin/Lep-Map/scripts/pileupParser2.awk|awk -f /ohta/joanna.rifkin/Lep-Map/scripts/pileup2posterior.awk|gzip > test_post.gz 2>Lep-MapCall.out 3>Lep-MapCall.err &
+	
+	#The files "sorted_bams" and "mapping.txt" (attached) are required for this step. See the Lep-Map3 documentation for a description.
+
+		#1a. Parallelized SNP-calling pipeline
+			wd /ohta/joanna.rifkin/Lep-Map/Rumex/Sex_specific_map
+#			grep ">" /ohta/joanna.rifkin/Genomes/Hi-C/no_eq_no_sc_DEGAPPEDhastate_28Sep2018_nbKXS.fasta |cut -c 2- >contigs.txt
+			grep ">" /ohta/joanna.rifkin/Genomes/Hi-C/hastate_28Sep2018_nbKXS.fasta |cut -c 2- >contigs.txt
+			#All BAM files must be indexed
+
+			for i in $(cat contigs.txt) 
+			do 
+			echo "samtools mpileup -r \"$i\" -q 10 -Q 10 -s \$(cat sorted_bams)|awk -f /ohta/joanna.rifkin/Lep-Map/scripts/pileupParser2.awk|awk -f /ohta/joanna.rifkin/Lep-Map/scripts/pileup2posterior.awk|gzip >\"$i\".post.gz" 
+			done > SNP_calling.txt 
+
+			nohup parallel --jobs 16 < SNP_calling.txt > SNP_calling.out 2>SNP_calling.err &
+			#It might be necessary to change the ulimit with large numbers of files
+
+			zcat *.post.gz* | awk '(NR==1 || ($1!="CHR"))'|gzip >all_post.gz & #Combine contig post.gz files into one genotype file
+			
+			#Stash extra post files somewhere out of the way
+			mv S*.post.gz* contig_post_files &
+			
+			#How many contigs actually have markers on them?
+			zcat all_post.gz  | grep "ScnbKXS*" - | cut -d '\;' -f 1 - | uniq > contigs_from_all_post.txt &
+			wc -l contigs_from_all_post.txt 
+			1340 contigs_from_all_post.txt
+			
+			#How many sites are called total?
+			zcat all_post.gz  | wc -l &
+			3803842
+
+
+#2. Use the ParentCall2 module in Lep-Map3 to estimate parental genotypes and for haplotype reconstruction. 
+#The file generated in the previous step and the pedigree file (attached) are require for this step.
+
+		nohup zcat all_post.gz|java -cp /ohta/joanna.rifkin/Lep-Map/bin ParentCall2 data=pedigree.txt posteriorFile=- removeNonInformative=1 outputParentPosterior=1 XLimit=2 |gzip > all_post.call.gz &
+		Number of called markers = 166410 (166410 informative)
+		Number of called Z/X markers = 2473
+
+#2. Use Filtering2 with a low data tolerance to try filtering the data.
+
+	nohup zcat all_post.call.gz |java -cp /ohta/joanna.rifkin/Lep-Map/bin Filtering2 data=- dataTolerance=0.001|gzip >data_f.call.gz &
