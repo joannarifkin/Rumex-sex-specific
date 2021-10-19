@@ -1,0 +1,17 @@
+########running EDTA
+#headers have over 20 characters which is too many---causes an error message
+#command to remove "PScnbKXS" from any fasta header and change it to "S"
+cp ohta1/joanna.rifkin/Genomes/Hastatulus_Hi-C_reduced/REF_LA.fa.gz .
+gunzip REF_LA.fa.gz
+sed 's/^>PScnbKXS/>S/g' /ohta1/solomiya.hnatovska/genome2/EDTA/rumexEDTArun/REF_LA.fa >shortenedheaders.REF_LA.fa
+#check the headers:
+grep "^>" shortenedheaders.REF_LA.fa >shortenedheaders.REF_LA.fa.headers
+
+#commands used to run EDTA on rumex:
+conda activate EDTA
+nohup perl ../EDTA_raw.pl --genome /ohta1/solomiya.hnatovska/genome2/EDTA/rumexEDTArun/shortenedheaders.REF_LA.fa --type ltr -t 4 >LTR.st.out &
+nohup perl ../EDTA_raw.pl --genome /ohta1/solomiya.hnatovska/genome2/EDTA/rumexEDTArun/shortenedheaders.REF_LA.fa --type tir -t 4 >TIR.st.out &
+nohup perl ../EDTA_raw.pl --genome /ohta1/solomiya.hnatovska/genome2/EDTA/rumexEDTArun/shortenedheaders.REF_LA.fa --type helitron -t 4 >Helitron.st.out &
+
+# Command to run the rest of the filtering with no CDS filtering
+nohup perl ../EDTA.pl --overwrite 0 --genome /ohta1/solomiya.hnatovska/genome2/EDTA/rumexEDTArun/shortenedheaders.REF_LA.fa --sensitive 1 --anno 1 -t 10 >rumex.EDTA.st.out &

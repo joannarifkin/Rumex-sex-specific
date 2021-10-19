@@ -1,0 +1,4 @@
+#command used to run rnammer-1.2
+
+# rnammer -S kingdom -m molecule_type -gff output_gff -h output_hmmreport -f output_fasta input_sequence.fa
+nohup rnammer -S euk -multi -m tsu,ssu,lsu -gff rumex_rdna_output.gff -h rumex_rdna_output.hmmreport -f rumex_rdna_output.fasta /ohta1/solomiya.hnatovska/genome2/EDTA/rumexEDTArun/shortenedheaders.REF_LA.fa &
