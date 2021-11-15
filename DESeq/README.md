@@ -1,2 +1,4 @@
 #Scripts for differential expression analysis
-rhast_sexbias_tx_bud.R - script to identify sex-bias 
+rhast_sexbias_tx.R > Deseq2 script for leaf tissues
+rhast_sexbias_bud_tx > Deseq2 script for bud tissues
+SnpDensityPlot.R & finalLG4SNPsAll > script for making the sex-linked SNP figure + the file of snps 
