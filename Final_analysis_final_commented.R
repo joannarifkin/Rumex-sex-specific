@@ -840,12 +840,40 @@ View(subset(complete_windowed_dataset, complete_windowed_dataset$LG=="LG3"))
     
     plot(complete_windowed_dataset$cm_mb_female, complete_windowed_dataset$sum_BUSCO_Length)
     
-    View(complete_windowed_dataset %>% group_by(LG) %>% summarise(sum=sum( sum_length_RNA_TEs_all)))
+  #  View(complete_windowed_dataset %>% group_by(LG) %>% summarise(sum=sum( sum_length_RNA_TEs_all)))
     
-    View(complete_windowed_dataset %>% group_by(LG) %>% summarise(mean=mean( sum_length_RNA_TEs_all)))
-    
-    
+    #View(complete_windowed_dataset %>% group_by(LG) %>% summarise(mean=mean( sum_length_RNA_TEs_all)))
 
+    
+################ 3.4.2 Content of unincorporated scaffolds ################
+    # Gene content    
+    #    complete_windowed_dataset<-read.csv("complete_windowed_data_3.3_8-30-2021.csv")
+    unique(complete_windowed_dataset$LG)
+
+    complete_windowed_dataset<-subset(complete_windowed_dataset, complete_windowed_dataset$LG != "NA")
+    
+    LG_names<-c("LG1","LG2","LG3","LG4","LG5")
+    LGs<-subset(complete_windowed_dataset,complete_windowed_dataset$LG %in% LG_names)
+    uninc_scaff<-subset(complete_windowed_dataset,!complete_windowed_dataset$LG %in% LG_names)
+   # View(uninc_scaff)
+    
+  #  View(summary(uninc_scaff))
+   # View(summary(LGs))
+    
+    #TE content (because contig names were different in TE annotation)
+    windowed_TEs<-read.csv("windowed_TE_no_overlaps_by_type.csv")
+    colnames(windowed_TEs)
+    windowed_TEs$N_TEs_all<-rowSums(windowed_TEs[,c(4:14)], na.rm = T)
+    #View(uninc_scaff_TEs)
+    
+    windowed_TEs$sum_length_TEs_all<-rowSums(windowed_TEs[,c(15:25)], na.rm = T)
+    LGs_TEs<-subset(windowed_TEs,windowed_TEs$LG %in% LG_names)
+    uninc_scaff_TEs<-subset(windowed_TEs,!windowed_TEs$LG %in% LG_names)
+    #View(uninc_scaff_TEs)
+    #View(summary(uninc_scaff_TEs))
+    #View(summary(LGs_TEs))
+    
+    
     
 ################ 4. Test predictions with linear models ################
     
