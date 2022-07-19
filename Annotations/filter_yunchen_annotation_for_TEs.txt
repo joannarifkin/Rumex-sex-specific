@@ -1,0 +1,46 @@
+
+
+cd /ohta1/joanna.rifkin/Genomes/Hastatulus_Hi-C_reduced
+
+
+
+
+/ohta1/solomiya.hnatovska/genome2/EDTA/rumexEDTArun/shortenedheaders.REF_LA.fa.mod.EDTA.anno/shortenedheaders.REF_LA.fa.mod.EDTA.TEanno.split.gff3
+
+
+/ohta2/Rumex/REF_LA_annotation_202107/REF_LA_genes.gff
+
+
+nohup bedtools intersect -v -a /ohta2/Rumex/REF_LA_annotation_202107/REF_LA_genes.gff -b /ohta1/solomiya.hnatovska/genome2/EDTA/rumexEDTArun/shortenedheaders.REF_LA.fa.mod.EDTA.anno/shortenedheaders.REF_LA.fa.mod.EDTA.TEanno.split.gff3 > TE_filtered_REF_LA_genes.gff &
+
+grep "\sgene\s" TE_filtered_REF_LA_genes.gff > gene_heads_only_TE_filtered_REF_LA_genes.gff
+
+################ 
+Only exclude TEs overlapping exons
+
+
+grep "\sexon\s" TE_filtered_REF_LA_genes.gff > exons_only_TE_filtered_REF_LA_genes.gff
+
+nohup bedtools intersect -v -a exons_only_TE_filtered_REF_LA_genes.gff -b /ohta1/solomiya.hnatovska/genome2/EDTA/rumexEDTArun/shortenedheaders.REF_LA.fa.mod.EDTA.anno/shortenedheaders.REF_LA.fa.mod.EDTA.TEanno.split.gff3 > TE_filtered_REF_LA_exons.gff &
+
+
+
+"E:/Users/Joanna/Dropbox/Professional/University_of_Toronto/Genomics/LinkageMap/Replacement_sex_specific_recombination_map/Windowed_analyses/gene_heads_only_REF_LA_genes.gff"
+
+
+##########
+Pull all genes with TE-filtered exons from gff
+
+
+cd /ohta1/joanna.rifkin/Genomes/Hastatulus_Hi-C_reduced
+
+grep -f filtered_exon_list.txt REF_LA_genes.gff > TE_filtered_exon_filtered_REF_LA_genes.gff &
+
+head -10 filtered_exon_list.txt > mini_filtered_exon_list.txt
+
+grep -f mini_filtered_exon_list.txt REF_LA_genes.gff > TE_filtered_exon_filtered_REF_LA_genes.gff &
+
+.txt
+
+grep Rumex_00000256 REF_LA_genes.gff
+
